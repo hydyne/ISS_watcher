@@ -59,7 +59,6 @@
 
         let issMarker = L.marker([0, 0]).addTo(map);  // Utworzenie markera dla ISS
         let issPath = L.polyline([], { color: 'yellow' }).addTo(map);  // Utworzenie linii śledzenia trasy ISS
-        let issPredictedPath = L.polyline([], { color: 'red', dashArray: '5, 5' }).addTo(map);  // Utworzenie linii dla przewidywanej trasy ISS
 
         let previousPositions = [];
         let logCounter = 1; // Licznik do numerowania wierszy w logu
@@ -90,9 +89,6 @@
                     // Przesunięcie widoku mapy na nową pozycję ISS
                     map.setView([latitude, longitude], map.getZoom());
 
-                    // Aktualizacja przewidywanej ścieżki
-                    updatePredictedPath();
-
                     // Dodanie nowego wiersza do logu
                     const logEntry = `{ "id": ${logCounter}, "latitude": ${latitude.toFixed(5)}, "longitude": ${longitude.toFixed(5)}},`;
                     document.getElementById('log').innerHTML += logEntry + '<br>';
@@ -102,39 +98,6 @@
                     document.getElementById('position').innerText = 
                         'Błąd ładowania danych: ' + error.message;
                 });
-        }
-
-        function updatePredictedPath() {
-            if (previousPositions.length < 2) {
-                return;  // Potrzebujemy przynajmniej dwóch punktów do przewidywania
-            }
-
-            // Obliczenie średniej prędkości kątowej
-            const lastPosition = previousPositions[previousPositions.length - 1];
-            const secondLastPosition = previousPositions[previousPositions.length - 2];
-
-            const latDiff = lastPosition[0] - secondLastPosition[0];
-            const lonDiff = lastPosition[1] - secondLastPosition[1];
-
-            const predictedPositions = [];
-
-            let currentLat = lastPosition[0];
-            let currentLon = lastPosition[1];
-
-            // Przewidywanie pozycji na następne 600 sekund (10 minut)
-            for (let i = 1; i <= 600; i++) {
-                currentLat += latDiff;
-                currentLon += lonDiff;
-
-                // Zmiana współrzędnych, gdy ISS przekracza 180° długości geograficznej
-                if (currentLon > 180) currentLon -= 360;
-                if (currentLon < -180) currentLon += 360;
-
-                predictedPositions.push([currentLat, currentLon]);
-            }
-
-            // Aktualizacja linii przewidywanej ścieżki na mapie
-            issPredictedPath.setLatLngs(predictedPositions);
         }
 
         // Odświeżaj dane co 1 sekundę
