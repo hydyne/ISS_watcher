@@ -94,7 +94,7 @@
                     updatePredictedPath();
 
                     // Dodanie nowego wiersza do logu
-                    const logEntry = `${logCounter}. Szerokość: ${latitude.toFixed(5)}, Długość: ${longitude.toFixed(5)}`;
+                    const logEntry = `{ "id": ${logCounter}, "latitude": ${latitude.toFixed(5)}, "longitude": ${longitude.toFixed(5)}},`;
                     document.getElementById('log').innerHTML += logEntry + '<br>';
                     logCounter++;
                 })
