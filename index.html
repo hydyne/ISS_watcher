@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pozycja ISS na Mapie</title>
+    <!-- Dołączanie stylów Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Aktualna pozycja ISS</h1>
+    <p id="position">Ładowanie danych...</p>
+    <div id="map"></div>
+
+    <!-- Dołączanie skryptu Leaflet -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        let map = L.map('map').setView([0, 0], 2);  // Ustawienie początkowego widoku mapy
+
+        // Ustawienia warstwy mapy OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+
+        let issMarker = L.marker([0, 0]).addTo(map);  // Utworzenie markera dla ISS
+
+        function fetchISSPosition() {
+            fetch('http://api.open-notify.org/iss-now.json')
+                .then(response => response.json())
+                .then(data => {
+                    const latitude = data.iss_position.latitude;
+                    const longitude = data.iss_position.longitude;
+
+                    // Aktualizacja tekstu z pozycją
+                    document.getElementById('position').innerText = 
+                        `Szerokość geograficzna: ${latitude}, Długość geograficzna: ${longitude}`;
+
+                    // Aktualizacja pozycji markera na mapie
+                    issMarker.setLatLng([latitude, longitude]);
+                    
+                    // Przesunięcie widoku mapy na nową pozycję ISS
+                    map.setView([latitude, longitude], map.getZoom());
+                })
+                .catch(error => {
+                    document.getElementById('position').innerText = 
+                        'Błąd ładowania danych: ' + error.message;
+                });
+        }
+
+        // Odświeżaj dane co 1 sekundę
+        setInterval(fetchISSPosition, 1000);
+
+        // Pierwsze wywołanie funkcji, aby dane załadowały się od razu
+        fetchISSPosition();
+    </script>
+</body>
+</html>
