@@ -9,7 +9,7 @@
     <style>
         /* Ustawienie tła strony na gradient od czarnego do zielonego */
         body {
-            background: linear-gradient(to bottom, black, rgb(0, 74, 0));
+            background: linear-gradient(to bottom, black, green);
             font-family: 'Calibri', sans-serif;
             color: white; /* Opcjonalnie zmień kolor tekstu na biały, aby lepiej kontrastował z tłem */
             margin: 0;
@@ -26,12 +26,26 @@
             margin: 20px auto; /* Wycentrowanie mapy */
             border: 2px solid white; /* Opcjonalnie dodaj ramkę, aby mapa była lepiej widoczna */
         }
+
+        #log {
+            width: 70%; /* Dopasowanie szerokości do mapy */
+            height: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7); /* Lekko przejrzyste tło */
+            color: white;
+            border: 2px solid white;
+            overflow-y: auto; /* Dodanie przewijania w pionie */
+            font-family: monospace; /* Styl czcionki dla czytelności */
+        }
     </style>
 </head>
 <body>
     <h1>Aktualna pozycja ISS</h1>
     <p id="position">Ładowanie danych...</p>
     <div id="map"></div>
+
+    <div id="log"></div> <!-- Obszar tekstowy do logowania pozycji -->
 
     <!-- Dołączanie skryptu Leaflet -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -44,28 +58,83 @@
         }).addTo(map);
 
         let issMarker = L.marker([0, 0]).addTo(map);  // Utworzenie markera dla ISS
+        let issPath = L.polyline([], { color: 'yellow' }).addTo(map);  // Utworzenie linii śledzenia trasy ISS
+        let issPredictedPath = L.polyline([], { color: 'red', dashArray: '5, 5' }).addTo(map);  // Utworzenie linii dla przewidywanej trasy ISS
+
+        let previousPositions = [];
+        let logCounter = 1; // Licznik do numerowania wierszy w logu
 
         function fetchISSPosition() {
             fetch('http://api.open-notify.org/iss-now.json')
                 .then(response => response.json())
                 .then(data => {
-                    const latitude = data.iss_position.latitude;
-                    const longitude = data.iss_position.longitude;
+                    const latitude = parseFloat(data.iss_position.latitude);
+                    const longitude = parseFloat(data.iss_position.longitude);
 
                     // Aktualizacja tekstu z pozycją
                     document.getElementById('position').innerText = 
-                        `Szerokość geograficzna: ${latitude}, Długość geograficzna: ${longitude}`;
+                        `Szerokość geograficzna: ${latitude.toFixed(5)}, Długość geograficzna: ${longitude.toFixed(5)}`;
+
+                    // Dodanie nowej pozycji do ścieżki
+                    issPath.addLatLng([latitude, longitude]);
+                    previousPositions.push([latitude, longitude]);
+
+                    // Ograniczenie liczby przechowywanych pozycji do ostatnich 10
+                    if (previousPositions.length > 10) {
+                        previousPositions.shift();
+                    }
 
                     // Aktualizacja pozycji markera na mapie
                     issMarker.setLatLng([latitude, longitude]);
-                    
+
                     // Przesunięcie widoku mapy na nową pozycję ISS
                     map.setView([latitude, longitude], map.getZoom());
+
+                    // Aktualizacja przewidywanej ścieżki
+                    updatePredictedPath();
+
+                    // Dodanie nowego wiersza do logu
+                    const logEntry = `${logCounter}. Szerokość: ${latitude.toFixed(5)}, Długość: ${longitude.toFixed(5)}`;
+                    document.getElementById('log').innerHTML += logEntry + '<br>';
+                    logCounter++;
                 })
                 .catch(error => {
                     document.getElementById('position').innerText = 
                         'Błąd ładowania danych: ' + error.message;
                 });
+        }
+
+        function updatePredictedPath() {
+            if (previousPositions.length < 2) {
+                return;  // Potrzebujemy przynajmniej dwóch punktów do przewidywania
+            }
+
+            // Obliczenie średniej prędkości kątowej
+            const lastPosition = previousPositions[previousPositions.length - 1];
+            const secondLastPosition = previousPositions[previousPositions.length - 2];
+
+            const latDiff = lastPosition[0] - secondLastPosition[0];
+            const lonDiff = lastPosition[1] - secondLastPosition[1];
+
+            const predictedPositions = [];
+
+            let currentLat = lastPosition[0];
+            let currentLon = lastPosition[1];
+
+            // Przewidywanie pozycji na następne 600 sekund (10 minut)
+            for (let i = 1; i <= 600; i++) {
+                currentLat += latDiff;
+                currentLon += lonDiff;
+
+                // Zmiana współrzędnych, gdy ISS przekracza 180° długości geograficznej
+                if (currentLon > 180) currentLon -= 360;
+                if (currentLon < -180) currentLon += 360;
+
+                predictedPositions.push([currentLat, currentLon]);
+            }
+
+            // Aktualizacja linii przewidywanej ścieżki na mapie
+            issPredictedPath.setLatLngs(predictedPositions);
         }
 
         // Odświeżaj dane co 1 sekundę
