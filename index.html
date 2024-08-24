@@ -7,9 +7,24 @@
     <!-- Dołączanie stylów Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
+        /* Ustawienie tła strony na gradient od czarnego do zielonego */
+        body {
+            background: linear-gradient(to bottom, black, rgb(0, 74, 0));
+            font-family: 'Calibri', sans-serif;
+            color: white; /* Opcjonalnie zmień kolor tekstu na biały, aby lepiej kontrastował z tłem */
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, p {
+            margin: 20px;
+        }
+
         #map {
             height: 400px;
-            width: 100%;
+            width: 70%; /* Zmniejszenie szerokości mapy do 70% ekranu */
+            margin: 20px auto; /* Wycentrowanie mapy */
+            border: 2px solid white; /* Opcjonalnie dodaj ramkę, aby mapa była lepiej widoczna */
         }
     </style>
 </head>
