@@ -42,8 +42,10 @@
 </head>
 <body>
     <h1>Aktualna pozycja ISS</h1>
-    <p id="position">Ładowanie danych...</p>
+    <p id="position">Ładowanie danych...</p><p id="direction">Ładowanie danych...</p>
     <div id="map"></div>
+    <!-- pole informujące czy ISS leci na północ czy na południe -->
+    
 
     <div id="log"></div> <!-- Obszar tekstowy do logowania pozycji -->
 
@@ -62,6 +64,23 @@
 
         let previousPositions = [];
         let logCounter = 1; // Licznik do numerowania wierszy w logu
+
+        // Funkcja określająca kierunek ruchu ISS
+        function direction() {
+            let lastPosition = previousPositions[previousPositions.length - 1];
+            let secondLastPosition = previousPositions[previousPositions.length - 2];
+
+            if (lastPosition[0] > secondLastPosition[0]) {
+                document.getElementById('direction').innerText = 'ISS leci na północ';
+            } else if (lastPosition[0] < secondLastPosition[0]) {
+                document.getElementById('direction').innerText = 'ISS leci na południe';
+            } else {
+                document.getElementById('direction').innerText = 'ISS leci na wschód lub zachód';
+            }
+        }
+        // Aktualizacja kierunku po pierwszych 3 sekundach
+        setTimeout(direction, 3000);
+
 
         function fetchISSPosition() {
             fetch('http://api.open-notify.org/iss-now.json')
@@ -100,11 +119,20 @@
                 });
         }
 
+        // Przewidywanie toru lotu ISS na podstawie kierunku ruchu oraz aktualnej wartości latitude
+        // oraz danych z coordinates.json
+        
+        
+        
         // Odświeżaj dane co 1 sekundę
         setInterval(fetchISSPosition, 1000);
 
         // Pierwsze wywołanie funkcji, aby dane załadowały się od razu
         fetchISSPosition();
+
+        // Użycie danych z coordinates.json do obliczenia algorytmu przewidywania ścieżki ISS na podstawie ostatnich 10 pozycji
+            
+        
     </script>
 </body>
 </html>
