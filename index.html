@@ -51,6 +51,7 @@
 
     <!-- Dołączanie skryptu Leaflet -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="spline.js"></script>
     <script>
         let map = L.map('map').setView([0, 0], 2);  // Ustawienie początkowego widoku mapy
 
@@ -129,6 +130,16 @@
 
         // Pierwsze wywołanie funkcji, aby dane załadowały się od razu
         fetchISSPosition();
+
+        // const Spline = require('./spline');
+
+        // Now you can create instances of the Spline class and use it
+        const xs = [0, 1, 2, 3, 4];  // example x values
+        const ys = [0, 1, 4, 9, 16]; // example y values
+
+        const spline = new Spline(xs, ys);
+        const result = spline.at(2.5); // Get the interpolated value at x = 2.5
+        console.log(result);
 
         // Użycie danych z coordinates.json do obliczenia algorytmu przewidywania ścieżki ISS na podstawie ostatnich 10 pozycji
             
