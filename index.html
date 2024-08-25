@@ -6,39 +6,7 @@
     <title>Pozycja ISS na Mapie</title>
     <!-- Dołączanie stylów Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        /* Ustawienie tła strony na gradient od czarnego do zielonego */
-        body {
-            background: linear-gradient(to bottom, black, green);
-            font-family: 'Calibri', sans-serif;
-            color: white; /* Opcjonalnie zmień kolor tekstu na biały, aby lepiej kontrastował z tłem */
-            margin: 0;
-            padding: 0;
-        }
-
-        h1, p {
-            margin: 20px;
-        }
-
-        #map {
-            height: 400px;
-            width: 70%; /* Zmniejszenie szerokości mapy do 70% ekranu */
-            margin: 20px auto; /* Wycentrowanie mapy */
-            border: 2px solid white; /* Opcjonalnie dodaj ramkę, aby mapa była lepiej widoczna */
-        }
-
-        #log {
-            width: 70%; /* Dopasowanie szerokości do mapy */
-            height: 200px;
-            margin: 20px auto;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.7); /* Lekko przejrzyste tło */
-            color: white;
-            border: 2px solid white;
-            overflow-y: auto; /* Dodanie przewijania w pionie */
-            font-family: monospace; /* Styl czcionki dla czytelności */
-        }
-    </style>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <h1>Aktualna pozycja ISS</h1>
@@ -56,6 +24,7 @@
         let map = L.map('map').setView([0, 0], 2);  // Ustawienie początkowego widoku mapy
         let global_latitude = 0
         let global_longitude = 0
+        let global_ISS_direction = "north"
         // Ustawienia warstwy mapy OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
@@ -74,8 +43,10 @@
 
             if (lastPosition[0] > secondLastPosition[0]) {
                 document.getElementById('direction').innerText = 'ISS leci na północ';
+                global_ISS_direction = "north"
             } else if (lastPosition[0] < secondLastPosition[0]) {
                 document.getElementById('direction').innerText = 'ISS leci na południe';
+                global_ISS_direction = "south"
             } else {
                 document.getElementById('direction').innerText = 'ISS leci na wschód lub zachód';
             }

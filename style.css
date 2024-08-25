@@ -1,0 +1,31 @@
+/* Ustawienie tła strony na gradient od czarnego do zielonego */
+body {
+    background: linear-gradient(to bottom, black, green);
+    font-family: 'Calibri', sans-serif;
+    color: white; /* Opcjonalnie zmień kolor tekstu na biały, aby lepiej kontrastował z tłem */
+    margin: 0;
+    padding: 0;
+}
+
+h1, p {
+    margin: 20px;
+}
+
+#map {
+    height: 400px;
+    width: 70%; /* Zmniejszenie szerokości mapy do 70% ekranu */
+    margin: 20px auto; /* Wycentrowanie mapy */
+    border: 2px solid white; /* Opcjonalnie dodaj ramkę, aby mapa była lepiej widoczna */
+}
+
+#log {
+    width: 70%; /* Dopasowanie szerokości do mapy */
+    height: 200px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.7); /* Lekko przejrzyste tło */
+    color: white;
+    border: 2px solid white;
+    overflow-y: auto; /* Dodanie przewijania w pionie */
+    font-family: monospace; /* Styl czcionki dla czytelności */
+}
