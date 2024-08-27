@@ -38,23 +38,53 @@
         let previousPositions = [];
         let logCounter = 1; // Licznik do numerowania wierszy w logu
 
-        // Funkcja określająca kierunek ruchu ISS
         function direction() {
+            if (previousPositions.length < 2) {
+                console.log("Not enough data to determine direction");
+                return;
+            }
+
             let lastPosition = previousPositions[previousPositions.length - 1];
             let secondLastPosition = previousPositions[previousPositions.length - 2];
 
             if (lastPosition[0] > secondLastPosition[0]) {
                 document.getElementById('direction').innerText = 'ISS leci na północ';
-                global_ISS_direction = "north"
+                global_ISS_direction = "north";
             } else if (lastPosition[0] < secondLastPosition[0]) {
                 document.getElementById('direction').innerText = 'ISS leci na południe';
-                global_ISS_direction = "south"
+                global_ISS_direction = "south";
+            } else if (lastPosition[1] > secondLastPosition[1]) {
+                document.getElementById('direction').innerText = 'ISS leci na wschód';
+                global_ISS_direction = "east";
+            } else if (lastPosition[1] < secondLastPosition[1]) {
+                document.getElementById('direction').innerText = 'ISS leci na zachód';
+                global_ISS_direction = "west";
             } else {
-                document.getElementById('direction').innerText = 'ISS leci na wschód lub zachód';
+                document.getElementById('direction').innerText = 'ISS is stationary or moving minimally';
+                global_ISS_direction = "stationary";
             }
         }
-        // Aktualizacja kierunku po pierwszych 3 sekundach
-        setTimeout(direction, 3000);
+
+
+
+
+
+        // Updating direction to be used in the future in loop
+        // function direction() {
+        //     let lastPosition = previousPositions[previousPositions.length - 1];
+        //     let secondLastPosition = previousPositions[previousPositions.length - 2];
+
+        //     if (lastPosition[0] > secondLastPosition[0]) {
+        //         document.getElementById('direction').innerText = 'ISS leci na północ';
+        //         global_ISS_direction = "north"
+        //     } else if (lastPosition[0] < secondLastPosition[0]) {
+        //         document.getElementById('direction').innerText = 'ISS leci na południe';
+        //         global_ISS_direction = "south"
+        //     } else {
+        //         document.getElementById('direction').innerText = 'ISS leci na wschód lub zachód';
+        //     }
+        // }
+        
 
 
         function fetchISSPosition() {
@@ -121,6 +151,7 @@
 
         // Adjust data for xs and ys according to dierction of ISS
         function adjustDirection(xs, ys, direction) {
+            // direction()
             xs.length = 0;
             ys.length = 0;
             if (direction == 'north') {
@@ -156,6 +187,7 @@
 
         // Aktualizacja linii przewidywania ścieżki ISS
         function updatePredictionLine() {
+            direction();
             adjustDirection(xs, ys, global_ISS_direction);
             closestIndex = findClosestIndex(xs, global_latitude);
             ys_with_offset.length = 0;
@@ -196,7 +228,7 @@
 
             
 
-            global_longitude = spline.at(global_latitude);
+            // global_longitude = spline.at(global_latitude);
             }
 
         setInterval(updatePredictionLine, 1000);
