@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>Aktualna pozycja ISS</h1>
+    <h1>ISS watcher</h1>
     <p id="position">Ładowanie danych...</p><p id="direction">Ładowanie danych...</p>
     <div id="map"></div>
     <!-- pole informujące czy ISS leci na północ czy na południe -->
@@ -38,9 +38,10 @@
         let previousPositions = [];
         let logCounter = 1; // Licznik do numerowania wierszy w logu
 
+        // Function which finds direction of ISS
         function direction() {
             if (previousPositions.length < 2) {
-                console.log("Not enough data to determine direction");
+                // console.log("Not enough data to determine direction");
                 return;
             }
 
@@ -48,44 +49,13 @@
             let secondLastPosition = previousPositions[previousPositions.length - 2];
 
             if (lastPosition[0] > secondLastPosition[0]) {
-                document.getElementById('direction').innerText = 'ISS leci na północ';
+                document.getElementById('direction').innerText = 'ISS is flying north';
                 global_ISS_direction = "north";
-            } else if (lastPosition[0] < secondLastPosition[0]) {
-                document.getElementById('direction').innerText = 'ISS leci na południe';
-                global_ISS_direction = "south";
-            } else if (lastPosition[1] > secondLastPosition[1]) {
-                document.getElementById('direction').innerText = 'ISS leci na wschód';
-                global_ISS_direction = "east";
-            } else if (lastPosition[1] < secondLastPosition[1]) {
-                document.getElementById('direction').innerText = 'ISS leci na zachód';
-                global_ISS_direction = "west";
             } else {
-                document.getElementById('direction').innerText = 'ISS is stationary or moving minimally';
-                global_ISS_direction = "stationary";
-            }
+                document.getElementById('direction').innerText = 'ISS is flying south';
+                global_ISS_direction = "south";
+            } 
         }
-
-
-
-
-
-        // Updating direction to be used in the future in loop
-        // function direction() {
-        //     let lastPosition = previousPositions[previousPositions.length - 1];
-        //     let secondLastPosition = previousPositions[previousPositions.length - 2];
-
-        //     if (lastPosition[0] > secondLastPosition[0]) {
-        //         document.getElementById('direction').innerText = 'ISS leci na północ';
-        //         global_ISS_direction = "north"
-        //     } else if (lastPosition[0] < secondLastPosition[0]) {
-        //         document.getElementById('direction').innerText = 'ISS leci na południe';
-        //         global_ISS_direction = "south"
-        //     } else {
-        //         document.getElementById('direction').innerText = 'ISS leci na wschód lub zachód';
-        //     }
-        // }
-        
-
 
         function fetchISSPosition() {
             fetch('http://api.open-notify.org/iss-now.json')
@@ -97,7 +67,7 @@
 
                     // Aktualizacja tekstu z pozycją
                     document.getElementById('position').innerText = 
-                        `Szerokość geograficzna: ${latitude.toFixed(5)}, Długość geograficzna: ${longitude.toFixed(5)}`;
+                        `Latitude: ${latitude.toFixed(5)}, Longitude: ${longitude.toFixed(5)}`;
 
                     // Dodanie nowej pozycji do ścieżki
                     issPath.addLatLng([latitude, longitude]);
