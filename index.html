@@ -85,7 +85,8 @@
                     // map.setView([latitude, longitude], map.getZoom());
 
                     // Dodanie nowego wiersza do logu
-                    const logEntry = `{ "id": ${logCounter}, "latitude": ${latitude.toFixed(5)}, "longitude": ${longitude.toFixed(5)}},`;
+                    // const logEntry = `{ "id": ${logCounter}, "latitude": ${latitude.toFixed(5)}, "longitude": ${longitude.toFixed(5)}},`;
+                    const logEntry = `${latitude.toFixed(5)} ${longitude.toFixed(5)}`;
                     document.getElementById('log').innerHTML += logEntry + '<br>';
                     global_latitude = latitude.toFixed(2)
                     global_longitude = longitude.toFixed(2)
@@ -118,21 +119,33 @@
 
         const xs = []
         const ys = []
+        const xs_2 = []
+        const ys_2 = []
 
         // Adjust data for xs and ys according to dierction of ISS
         function adjustDirection(xs, ys, direction) {
             // direction()
             xs.length = 0;
             ys.length = 0;
+            xs_2.length = 0;
+            ys_2.length = 0;
             if (direction == 'north') {
                 for (var i = 0; i < xs_north.length; i++) {
                     xs.push(xs_north[i]);
                     ys.push(ys_north[i]);
                 }
+                for (var i = 0; i < xs_south.length; i++) {
+                    xs_2.push(xs_south[i]);
+                    ys_2.push(ys_south[i]);
+                }
             } else {
                 for (var i = 0; i < xs_south.length; i++) {
                     xs.push(xs_south[i]);
                     ys.push(ys_south[i]);
+                }
+                for (var i = 0; i < xs_north.length; i++) {
+                    xs_2.push(xs_north[i]);
+                    ys_2.push(ys_north[i]);
                 }
             }
         }
@@ -163,17 +176,35 @@
             ys_with_offset.length = 0;
             xs_with_offset.length = 0;
             var longitude_offset = global_longitude - ys[closestIndex];
+            var longitude_offset_second_line = (ys[ys.length-1] + longitude_offset);
             // for (var i = 0; i < ys.length; i++) {
             //     ys_with_offset.push(ys[i] + longitude_offset);
             // }
             for (var i = closestIndex; i < ys.length; i++) {
                 ys_with_offset.push(ys[i] + longitude_offset);
             }
-
-
             for (var i = closestIndex; i < xs.length; i++) {
                 xs_with_offset.push(xs[i]);
             }
+
+            // for (var i = 0; i < ys_2.length; i++) {
+            //     ys_with_offset.push(ys_2[i] - ys_2[0]);
+            // }
+            // for (var i = 0; i < xs_2.length; i++) {
+            //     xs_with_offset.push(xs_2[i]);
+            // }
+            // Addition of second part of the path
+            for (var i = 0; i < xs_2.length; i++) {
+                xs_with_offset.push(xs_2[i]);
+                ys_with_offset.push((ys_2[i] - ys_2[0]) + longitude_offset_second_line);
+            }
+            console.log(global_ISS_direction)
+            // console.log(ys_with_offset[ys_with_offset.length-1]);
+
+            // for (var i = 0; i < ys_2.length; i++) {
+            //     ys_with_offset.push(ys_2[i] + longitude_offset);
+                
+            // }
             
             
             var latlngs = [];
@@ -195,6 +226,7 @@
                     // Dodanie linii (polyline) przechodzącej przez wszystkie punkty
 
             predictionLine = L.polyline(latlngs, {color: 'green'}).addTo(map);
+            // console.log(ys);
 
             
 
