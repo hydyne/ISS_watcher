@@ -10,7 +10,11 @@
 </head>
 <body>
     <h1>ISS watcher</h1>
-    <p id="position">Ładowanie danych...</p><p id="direction">Ładowanie danych...</p>
+    <p id="position">Ładowanie danych...</p>
+    <p id="direction">Ładowanie danych...</p>
+    <input type="text" id="city-input" placeholder="Enter city name" /><br>
+    <button onclick="findCity()">Find City</button>
+    <p id='distance'>Find your location!</p>
     <div id="map"></div>
     <!-- pole informujące czy ISS leci na północ czy na południe -->
     
@@ -20,12 +24,18 @@
     <!-- Dołączanie skryptu Leaflet -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="spline.js"></script>
+    <script src="haversineDistance.js"></script>
     <script>
         let map = L.map('map').setView([0, 0], 2);  // Ustawienie początkowego widoku mapy
         let global_latitude = 0
         let global_longitude = 0
+        let searchLocLat = null
+        let searchLocLon = null
+        let searchLocDistance = 0;
+        let locationSelected = false;
         let global_ISS_direction = "north"
         var closestIndex = 0;
+        let selectedCity = "";
         // Ustawienia warstwy mapy OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
@@ -55,6 +65,42 @@
                 document.getElementById('direction').innerText = 'ISS is flying south';
                 global_ISS_direction = "south";
             } 
+        }
+
+        function findCity() {
+        var cityName = document.getElementById('city-input').value;
+        var url = `https://nominatim.openstreetmap.org/search?city=${cityName}&format=json&limit=1`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        var lat = data[0].lat;
+                        var lon = data[0].lon;
+                        var cityLocation = [lat, lon];
+                        locationSelected = true;
+
+                        // Center the map on the city location
+                        // map.setView(cityLocation, 10);
+
+                        // Add a marker for the city location
+                        L.marker(cityLocation).addTo(map)
+                            .bindPopup(`City: ${cityName}<br>Latitude: ${lat}<br>Longitude: ${lon}`)
+                            .openPopup();
+                        // Assign the city location to the global variables
+                        locationSelected = true;
+                        searchLocLat = lat;
+                        searchLocLon = lon;
+
+                        // Calculate the distance between the city and the ISS
+
+                    } else {
+                        alert('City not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
 
         function fetchISSPosition() {
@@ -165,9 +211,8 @@
 
             return closestIndex;
         }
-
-        // const spline = new Spline(xs_north, ys_north);
-
+        
+        
         // Aktualizacja linii przewidywania ścieżki ISS
         function updatePredictionLine() {
             direction();
@@ -177,9 +222,7 @@
             xs_with_offset.length = 0;
             var longitude_offset = global_longitude - ys[closestIndex];
             var longitude_offset_second_line = (ys[ys.length-1] + longitude_offset);
-            // for (var i = 0; i < ys.length; i++) {
-            //     ys_with_offset.push(ys[i] + longitude_offset);
-            // }
+            
             for (var i = closestIndex; i < ys.length; i++) {
                 ys_with_offset.push(ys[i] + longitude_offset);
             }
@@ -187,18 +230,12 @@
                 xs_with_offset.push(xs[i]);
             }
 
-            // for (var i = 0; i < ys_2.length; i++) {
-            //     ys_with_offset.push(ys_2[i] - ys_2[0]);
-            // }
-            // for (var i = 0; i < xs_2.length; i++) {
-            //     xs_with_offset.push(xs_2[i]);
-            // }
             // Addition of second part of the path
             for (var i = 0; i < xs_2.length; i++) {
                 xs_with_offset.push(xs_2[i]);
                 ys_with_offset.push((ys_2[i] - ys_2[0]) + longitude_offset_second_line);
             }
-            console.log(global_ISS_direction)
+            
             // console.log(ys_with_offset[ys_with_offset.length-1]);
 
             // for (var i = 0; i < ys_2.length; i++) {
@@ -223,14 +260,16 @@
             //             if (predictionLine) {
             //                 predictionLine.remove();
             // }
-                    // Dodanie linii (polyline) przechodzącej przez wszystkie punkty
+
+            // Dodanie linii (polyline) przechodzącej przez wszystkie punkty
 
             predictionLine = L.polyline(latlngs, {color: 'green'}).addTo(map);
             // console.log(ys);
 
             
-
-            // global_longitude = spline.at(global_latitude);
+            // Update distance between ISS and selected location
+            searchLocDistance = haversineDistance(global_latitude, global_longitude, searchLocLat, searchLocLon);
+            console.log(searchLocDistance)
             }
 
         setInterval(updatePredictionLine, 1000);
