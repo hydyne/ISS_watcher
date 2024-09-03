@@ -32,6 +32,7 @@
         let searchLocLat = null
         let searchLocLon = null
         let searchLocDistance = 0;
+        let cityLocation = [0, 0];
         let locationSelected = false;
         let global_ISS_direction = "north"
         var closestIndex = 0;
@@ -77,9 +78,9 @@
                     if (data.length > 0) {
                         var lat = data[0].lat;
                         var lon = data[0].lon;
-                        var cityLocation = [lat, lon];
+                        cityLocation = [lat, lon];
                         locationSelected = true;
-
+                        selectedCity = cityName;
                         // Center the map on the city location
                         // map.setView(cityLocation, 10);
 
@@ -268,8 +269,11 @@
 
             
             // Update distance between ISS and selected location
-            searchLocDistance = haversineDistance(global_latitude, global_longitude, searchLocLat, searchLocLon);
-            console.log(searchLocDistance)
+            if (locationSelected) {
+                searchLocDistance = haversineDistance(global_latitude, global_longitude, searchLocLat, searchLocLon);
+                document.getElementById('distance').innerText = 'ISS is ' + searchLocDistance.toFixed(0) + ' km from ' + selectedCity;
+                // console.log(searchLocDistance.toFixed(2));
+            }   
             }
 
         setInterval(updatePredictionLine, 1000);
