@@ -7,26 +7,36 @@
     <!-- Dołączanie stylów Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-    <h1>ISS watcher</h1>
-    <p id="position">Ładowanie danych...</p>
-    <p id="direction">Ładowanie danych...</p>
-    <input type="text" id="city-input" placeholder="Enter city name" /><br>
-    <button onclick="findCity()">Find City</button>
-    <p id='distance'>Find your location!</p>
-    <div id="map"></div>
-    <!-- pole informujące czy ISS leci na północ czy na południe -->
-    
-
-    <div id="log"></div> <!-- Obszar tekstowy do logowania pozycji -->
-
-    <!-- Dołączanie skryptu Leaflet -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="scripts/spline.js"></script>
     <script src="scripts/haversineDistance.js"></script>
     <script src="scripts/splineMultiplier.js"></script>
     <script src="scripts/findClosestIndex.js"></script>
+</head>
+<body>
+    <div class = "container">
+        <!-- 3 rows -->
+        <div class="header">
+            <div class = 'headerColumn1'>
+                <h1>ISS watcher</h1>
+            </div>
+            <div class = 'headerColumn2'>
+                <p id="position">Ładowanie danych...</p>
+                <p id="direction">Ładowanie danych...</p>
+            </div>
+        </div>
+        <div class="inputRow">
+            <p id='distance'>Find your location!</p>
+            <input type="text" id="city-input" placeholder="Enter city name" />
+            <button onclick="findCity()">Find City</button>            
+        </div>
+        <div id="map"></div>
+        <div id="log"></div> <!-- Obszar tekstowy do logowania pozycji -->
+    </div>
+    
+
+    <!-- Dołączanie skryptu Leaflet -->
+    
     <script>
         let map = L.map('map').setView([0, 0], 2);  // Ustawienie początkowego widoku mapy
         let global_latitude = 0
@@ -88,7 +98,7 @@
 
                         // Add a marker for the city location
                         L.marker(cityLocation).addTo(map)
-                            .bindPopup(`City: ${cityName}<br>Latitude: ${lat}<br>Longitude: ${lon}`)
+                            .bindPopup(`${cityName}<br>Lat: ${lat}<br>Lon: ${lon}`)
                             .openPopup();
                         // Assign the city location to the global variables
                         locationSelected = true;
@@ -161,8 +171,8 @@
         const xs_south_input = [ 51.62, 51.62, 51.62, 51.62, 51.61, 51.61, 51.61, 51.61, 51.61, 51.61, 51.61, 51.60, 51.60, 51.60, 51.60, 51.60, 51.59, 51.59, 51.59, 51.59, 51.59, 51.58, 51.58, 51.58, 51.57, 51.57, 51.57, 51.57, 51.56, 51.56, 51.56, 51.55, 51.55, 51.54, 51.54, 51.54, 51.53, 51.53, 51.52, 51.52, 51.52, 51.51, 51.51, 51.50, 51.50, 51.49, 51.49, 51.48, 51.48, 51.47, 51.46, 51.46, 51.45, 51.45, 51.44, 51.43, 51.43, 51.42, 51.42, 51.41, 51.40, 51.40, 51.39, 51.38, 51.38, 51.37, 51.36, 51.36, 51.35, 51.34, 51.34, 51.33, 51.32, 51.31, 51.31, 51.30, 51.29, 51.28, 51.28, 51.27, 51.26, 51.25, 51.24, 51.23, 51.23, 51.22, 51.21, 51.20, 51.19, 51.18, 51.17, 51.16, 51.16, 51.15, 51.14, 51.13, 51.12, 51.11, 51.10, 51.09, 51.08, 51.07, 51.06, 51.05, 51.04, 51.03, 51.02, 51.01, 51.00, 50.92, 50.09, 48.98, 47.59, 45.96, 44.11, 42.06, 39.87, 37.52, 35.04, 32.46, 29.78, 27.06, 24.24, 21.37, 18.45, 15.50, 12.54, 9.53, 6.50, 3.46, 0.41, -2.60, -5.65, -8.68, -11.69, -14.68, -17.62, -20.55, -23.43, -26.26, -29.03, -31.71, -34.32, -36.82, -39.21, -41.46, -43.54, -45.45, -47.15, -48.61, -49.81, -50.71, -51.32, -51.60 ]
         const ys_south_input = [ 7.52, 7.62, 7.72, 7.82, 7.92, 8.02, 8.12, 8.22, 8.32, 8.42, 8.52, 8.62, 8.72, 8.82, 8.92, 9.02, 9.12, 9.22, 9.32, 9.42, 9.52, 9.62, 9.72, 9.82, 9.92, 10.02, 10.12, 10.22, 10.32, 10.42, 10.52, 10.62, 10.72, 10.82, 10.92, 11.02, 11.11, 11.21, 11.31, 11.41, 11.51, 11.61, 11.71, 11.81, 11.91, 12.01, 12.11, 12.21, 12.31, 12.41, 12.61, 12.71, 12.81, 12.90, 13.00, 13.10, 13.20, 13.30, 13.40, 13.50, 13.60, 13.70, 13.80, 13.90, 14.00, 14.09, 14.19, 14.29, 14.39, 14.49, 14.59, 14.69, 14.79, 14.88, 14.98, 15.08, 15.18, 15.28, 15.38, 15.48, 15.57, 15.67, 15.77, 15.87, 15.97, 16.07, 16.16, 16.26, 16.36, 16.46, 16.56, 16.65, 16.75, 16.85, 16.95, 17.05, 17.14, 17.24, 17.34, 17.44, 17.54, 17.63, 17.73, 17.83, 17.93, 18.02, 18.12, 18.22, 18.31, 18.99, 24.71, 30.15, 35.35, 40.24, 44.82, 49.09, 53.04, 56.75, 60.21, 63.44, 66.48, 69.32, 72.04, 74.62, 77.10, 79.48, 81.77, 84.02, 86.23, 88.41, 90.57, 92.71, 94.88, 97.08, 99.31, 101.60, 103.94, 106.39, 108.94, 111.62, 114.44, 117.40, 120.57, 123.96, 127.60, 131.49, 135.64, 140.13, 144.93, 150.04, 155.44, 161.04, 166.88, 172.85 ]
         
-        const north = splineMultiplier(xs_north_input, ys_north_input, 5000);
-        const south = splineMultiplier(ys_south_input, xs_south_input, 5000);
+        const north = splineMultiplier(xs_north_input, ys_north_input, 10000);
+        const south = splineMultiplier(ys_south_input, xs_south_input, 10000);
 
         const xs_north = north.new_xs;
         const ys_north = north.new_ys;
@@ -246,7 +256,7 @@
             // Update distance between ISS and selected location
             if (locationSelected) {
                 searchLocDistance = haversineDistance(global_latitude, global_longitude, searchLocLat, searchLocLon);
-                document.getElementById('distance').innerText = 'ISS is ' + searchLocDistance.toFixed(0) + ' km from ' + selectedCity;
+                document.getElementById('distance').innerText = 'ISS is ' + searchLocDistance.toFixed(0) + ' km away';
                 // console.log(searchLocDistance.toFixed(2));
             }   
         }

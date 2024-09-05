@@ -6,6 +6,35 @@ body {
     margin: 0;
     padding: 0;
 }
+.header {
+    background-color: black; /* Dodanie ciemnego tła dla nagłówka */
+    color: rgb(221, 220, 220);
+    display: flex;
+    width: 70%;
+    margin: 0 auto;
+    align-items: center;
+}
+.headerColumn1 {
+    flex: 0 0 60%; /* Ustawienie szerokości kolumny na 60% */
+    /* padding: 10px; */
+    
+    /* height: 100px; */
+}
+
+.headerColumn2 {
+    flex: 1; /* Ustawienie szerokości kolumny na reszte miejsca*/
+    /* padding: 10px; */
+     /* Wycentrowanie tekstu w prawej kolumnie */
+}
+
+.inputRow {
+    display: flex;
+    justify-content: flex-end; /* Aligns content to the right */
+    align-items: center; /* Vertically centers the items (if needed) */
+    gap: 10px; /* Adds space between elements */
+    width: 70%; /* Limit the width of the inputRow */
+    margin: 20px auto; /* Center the inputRow horizontally */
+}
 
 h1, p {
     margin: 20px;
