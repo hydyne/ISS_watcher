@@ -1,14 +1,14 @@
 /* Ustawienie tła strony na gradient od czarnego do zielonego */
 body {
-    background: linear-gradient(to bottom, black, green);
+    background: linear-gradient(112.1deg, rgb(32, 38, 57) 11.4%, rgb(63, 76, 119) 70.2%);
     font-family: 'Calibri', sans-serif;
     color: white; /* Opcjonalnie zmień kolor tekstu na biały, aby lepiej kontrastował z tłem */
     margin: 0;
     padding: 0;
 }
 .header {
-    background-color: black; /* Dodanie ciemnego tła dla nagłówka */
-    color: rgb(221, 220, 220);
+    /* background-color: black; Dodanie ciemnego tła dla nagłówka */
+    color: rgb(240, 240, 240);
     display: flex;
     width: 70%;
     margin: 0 auto;
@@ -63,7 +63,7 @@ h1, p {
     padding: 10px;
     width: 300px;
     font-size: 16px;
-    border: 2px solid #ccc;
+    border: 1.5px solid #ccc;
     border-radius: 5px;
     outline: none;
     box-sizing: border-box; /* Ensures border is included in the total height */
@@ -79,7 +79,7 @@ button {
     border: 2px solid transparent; /* Add a border to match the input field's structure */
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.1s ease;
+    transition: background-color 0.3s ease;
     box-sizing: border-box; /* Include padding and border in the button size */
 }
 
