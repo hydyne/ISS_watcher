@@ -63,25 +63,27 @@ h1, p {
     padding: 10px;
     width: 300px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 5px;
     outline: none;
+    box-sizing: border-box; /* Ensures border is included in the total height */
 }
-
 #city-input:focus {
-    border-color: #007bff;
+    border-color: red;
 }
-
 button {
-    padding: 10px 20px;
+    padding: 10px 18px; /* Slightly smaller padding to match input field height */
     font-size: 16px;
     color: #fff;
     background-color: #007bff;
-    border: none;
+    border: 2px solid transparent; /* Add a border to match the input field's structure */
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.1s ease;
+    box-sizing: border-box; /* Include padding and border in the button size */
 }
 
 button:hover {
     background-color: #0056b3;
 }
+
